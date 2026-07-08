@@ -14,8 +14,10 @@ class BackendOfflineException implements Exception {
 
 class DamService {
   // ── Backend Scraper URL ─────────────────────────────────────────────────────
+  // Production hosted Render scraper API
+  static const String _productionRenderUrl = 'https://feature-kbn0.onrender.com';
+
   // Android emulator needs 10.0.2.2 to reach the host machine's localhost.
-  // Change to your LAN IP if testing on a real phone (e.g. http://192.168.1.5:3001)
   static const String _scraperBase = 'http://10.0.2.2:3001';
 
   // Fallback for desktop/web Flutter running on the same machine
@@ -24,12 +26,12 @@ class DamService {
   /// Checks whether the backend is reachable and returns the base URL that works.
   /// Returns null if both URLs are unreachable.
   Future<String?> _reachableBase() async {
-    for (final base in [_scraperBaseLocal, _scraperBase]) {
+    for (final base in [_productionRenderUrl, _scraperBaseLocal, _scraperBase]) {
       try {
         final uri = Uri.parse('$base/api/health');
         final response = await http
             .get(uri)
-            .timeout(const Duration(seconds: 5));
+            .timeout(const Duration(seconds: 8));
         if (response.statusCode == 200) return base;
       } catch (_) {
         continue;
