@@ -191,12 +191,17 @@ class _AdScreenState extends State<AdScreen> {
 
             // Offer Card 1: Agri Supplies
             _buildOfferCard(
-              title: isTa ? 'விவசாய உரங்கள் & விதைகள்' : 'Agri Inputs & Seeds Discount',
+              title: isTa
+                  ? 'விவசாய உரங்கள் & விதைகள்'
+                  : 'Agri Inputs & Seeds Discount',
               description: isTa
                   ? 'ஈரோடு & சுற்றியுள்ள பகுதிகளுக்கான சிறப்புத் தள்ளுபடி சலுகைகள்'
                   : 'Special discounts on certified paddy seeds & organic fertilizers',
               badge: 'UP TO 20% OFF',
-              gradientColors: [const Color(0xFF2E7D32), const Color(0xFF43A047)],
+              gradientColors: [
+                const Color(0xFF2E7D32),
+                const Color(0xFF43A047),
+              ],
               icon: Icons.grass_rounded,
             ),
 
@@ -204,12 +209,17 @@ class _AdScreenState extends State<AdScreen> {
 
             // Offer Card 2: Bullion & Jewellery
             _buildOfferCard(
-              title: isTa ? 'ஆபரண தங்கம் & வெள்ளி சேதாரம் தள்ளுபடி' : 'Jewellery Making Charge Off',
+              title: isTa
+                  ? 'ஆபரண தங்கம் & வெள்ளி சேதாரம் தள்ளுபடி'
+                  : 'Jewellery Making Charge Off',
               description: isTa
                   ? 'பிரபல நகைக் கடைகளின் சிறப்புத் தள்ளுபடி சலுகைகள்'
                   : 'Zero making charges on 22K Gold Sovereign purchases this week',
               badge: 'SPECIAL OFFER',
-              gradientColors: [const Color(0xFFFF8F00), const Color(0xFFFFA000)],
+              gradientColors: [
+                const Color(0xFFFF8F00),
+                const Color(0xFFFFA000),
+              ],
               icon: Icons.workspace_premium_rounded,
             ),
           ],
@@ -292,10 +302,7 @@ class _AdScreenState extends State<AdScreen> {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey.shade600,
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                 ),
               ],
             ),
