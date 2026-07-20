@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/dam_provider.dart';
 import '../../utils/localization.dart';
-import '../widgets/dam_card.dart';
-import 'compare_screen.dart';
-import 'dam_detail_screen.dart';
+import 'dam_list_screen.dart';
 import 'market_screen.dart';
 import '../../providers/market_provider.dart';
 import '../../models/market_model.dart';
@@ -102,39 +100,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
           IconButton(
-            icon: const Icon(
-              Icons.compare_arrows_rounded,
-              color: Color(0xFF0288D1),
-              size: 28,
-            ),
-            tooltip: Localization.translate(
-              'compare_dams',
-              provider.currentLanguage,
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const CompareScreen()),
-              );
-            },
-          ),
-          IconButton(
-            icon: const Icon(
-              Icons.storefront_rounded,
-              color: Color(0xFFFF8F00),
-              size: 26,
-            ),
-            tooltip: provider.currentLanguage == 'ta'
-                ? 'நேரடி சந்தை நிலவரம்'
-                : 'Market Rates',
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const MarketScreen()),
-              );
-            },
-          ),
-          IconButton(
             icon: const Icon(Icons.refresh_rounded, color: Colors.black87),
             onPressed: () => provider.loadDams(),
           ),
@@ -159,56 +124,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 8),
-                      // 1. Overall State Reservoir Storage Panel
+                      // 1. Three Main Feature Navigation Cards (Dams, Gold & Metals, Erode Mandi)
+                      _buildThreeCardsSection(provider),
+                      const SizedBox(height: 20),
+
+                      // 2. Tamil Nadu Reservoir Overall Storage Overview
                       _buildOverallStatsCard(provider, size),
-                      const SizedBox(height: 12),
-
-                      // 1b. Live Market Rates Ticker Card
-                      _buildMarketBanner(provider),
-                      const SizedBox(height: 16),
-
-                      // 2. Search Bar
-                      _buildSearchBar(provider),
-                      const SizedBox(height: 16),
-
-                      // 3. District Horizontal Chips Filter
-                      _buildDistrictFilters(provider),
-                      const SizedBox(height: 12),
-
-                      // 4. Alert Level Filter Row
-                      _buildAlertFilters(provider),
-                      const SizedBox(height: 16),
-
-                      // 5. Header: Dams list + Sort Actions
-                      _buildSortHeader(provider),
-                      const SizedBox(height: 12),
-
-                      // 6. Dam Cards List
-                      provider.dams.isEmpty
-                          ? _buildEmptyStateWidget(provider)
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: provider.dams.length,
-                              itemBuilder: (context, index) {
-                                final dam = provider.dams[index];
-                                return DamCard(
-                                  dam: dam,
-                                  onFavoriteToggle: () =>
-                                      provider.toggleFavorite(dam.id),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            DamDetailScreen(damId: dam.id),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
-                      const SizedBox(height: 40),
+                      const SizedBox(height: 28),
                     ],
                   ),
                 ),
@@ -254,15 +176,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                Localization.translate('overall_storage', lang),
-                style: TextStyle(
-                  color: Colors.blueGrey.shade800,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1.0,
+              Expanded(
+                child: Text(
+                  Localization.translate('overall_storage', lang),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.blueGrey.shade800,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
+              const SizedBox(width: 8),
               if (alertCount > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -270,13 +197,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF1744).withOpacity(0.12),
+                    color: const Color(0xFFFF1744).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: const Color(0xFFFF1744).withOpacity(0.4),
+                      color: const Color(0xFFFF1744).withValues(alpha: 0.4),
                     ),
                   ),
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(
                         Icons.warning_amber_rounded,
@@ -286,6 +214,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       const SizedBox(width: 4),
                       Text(
                         "$alertCount ${Localization.translate('danger_alerts', lang)}",
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           color: Color(0xFFFF1744),
                           fontSize: 9,
@@ -302,14 +232,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF9100).withOpacity(0.12),
+                    color: const Color(0xFFFF9100).withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: const Color(0xFFFF9100).withOpacity(0.4),
+                      color: const Color(0xFFFF9100).withValues(alpha: 0.4),
                     ),
                   ),
                   child: Text(
                     "$warningCount ${Localization.translate('active_watches', lang)}",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Color(0xFFFF9100),
                       fontSize: 9,
@@ -460,330 +392,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSearchBar(DamProvider provider) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: TextField(
-        controller: _searchController,
-        style: const TextStyle(color: Colors.black87),
-        onChanged: provider.updateSearchQuery,
-        decoration: InputDecoration(
-          hintText: Localization.translate(
-            'search_bar_hint',
-            provider.currentLanguage,
-          ),
-          hintStyle: TextStyle(color: Colors.grey.shade500),
-          prefixIcon: const Icon(Icons.search_rounded, color: Colors.black54),
-          suffixIcon: _searchController.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear_rounded, color: Colors.black54),
-                  onPressed: () {
-                    _searchController.clear();
-                    provider.updateSearchQuery('');
-                  },
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDistrictFilters(DamProvider provider) {
-    final districts = provider.districts;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            Localization.translate('filter_district', provider.currentLanguage),
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 36,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: districts.length,
-            itemBuilder: (context, index) {
-              final district = districts[index];
-              final isSelected = provider.selectedDistrict == district;
-              return Container(
-                margin: const EdgeInsets.only(right: 8),
-                child: FilterChip(
-                  label: Text(
-                    Localization.translateDistrict(
-                      district,
-                      provider.currentLanguage,
-                    ),
-                  ),
-                  selected: isSelected,
-                  onSelected: (_) => provider.setDistrictFilter(district),
-                  labelStyle: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black87,
-                    fontWeight: isSelected
-                        ? FontWeight.bold
-                        : FontWeight.normal,
-                    fontSize: 12,
-                  ),
-                  selectedColor: const Color(0xFF0288D1),
-                  backgroundColor: const Color(0xFFF1F5F9),
-                  checkmarkColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAlertFilters(DamProvider provider) {
-    final alertFilters = ['All', 'Danger', 'Warning', 'Watch', 'Normal'];
-    return SizedBox(
-      height: 32,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: alertFilters.length,
-        itemBuilder: (context, index) {
-          final alert = alertFilters[index];
-          final isSelected = provider.selectedAlertFilter == alert;
-          Color chipColor = const Color(0xFFF1F5F9);
-          Color textColor = Colors.black87;
-
-          if (isSelected) {
-            textColor = Colors.white;
-            if (alert == 'All') {
-              chipColor = const Color(0xFF0288D1);
-            } else if (alert == 'Danger') {
-              chipColor = const Color(0xFFFF1744);
-            } else if (alert == 'Warning') {
-              chipColor = const Color(0xFFFF9100);
-            } else if (alert == 'Watch') {
-              chipColor = const Color(0xFFFFD600);
-              textColor = Colors.black87;
-            } else {
-              chipColor = const Color(0xFF00C853);
-            }
-          }
-
-          return Container(
-            margin: const EdgeInsets.only(right: 8),
-            child: InkWell(
-              onTap: () => provider.setAlertFilter(alert),
-              borderRadius: BorderRadius.circular(10),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: chipColor,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: isSelected
-                        ? Colors.transparent
-                        : const Color(0xFFE2E8F0),
-                  ),
-                ),
-                child: Text(
-                  Localization.translate(
-                    alert.toLowerCase(),
-                    provider.currentLanguage,
-                  ),
-                  style: TextStyle(
-                    color: textColor,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                    fontSize: 11,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildSortHeader(DamProvider provider) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(
-            "${Localization.translate('reservoirs_count', provider.currentLanguage)} (${provider.dams.length})",
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        PopupMenuButton<String>(
-          icon: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Flexible(
-                child: Text(
-                  "${Localization.translate('sort_by', provider.currentLanguage)}: ${_getSortLabel(provider.sortBy, provider.currentLanguage)}",
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Color(0xFF0288D1),
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 4),
-              Icon(
-                provider.sortAscending
-                    ? Icons.arrow_upward_rounded
-                    : Icons.arrow_downward_rounded,
-                color: const Color(0xFF0288D1),
-                size: 14,
-              ),
-            ],
-          ),
-          onSelected: provider.setSortBy,
-          color: Colors.white,
-          itemBuilder: (context) => [
-            PopupMenuItem(
-              value: 'capacity',
-              child: Text(
-                Localization.translate(
-                  'capacity_limit',
-                  provider.currentLanguage,
-                ),
-                style: const TextStyle(color: Colors.black87),
-              ),
-            ),
-            PopupMenuItem(
-              value: 'level_percentage',
-              child: Text(
-                Localization.translate(
-                  'level_percentage',
-                  provider.currentLanguage,
-                ),
-                style: const TextStyle(color: Colors.black87),
-              ),
-            ),
-            PopupMenuItem(
-              value: 'inflow',
-              child: Text(
-                Localization.translate('inflow_rate', provider.currentLanguage),
-                style: const TextStyle(color: Colors.black87),
-              ),
-            ),
-            PopupMenuItem(
-              value: 'outflow',
-              child: Text(
-                Localization.translate(
-                  'outflow_rate',
-                  provider.currentLanguage,
-                ),
-                style: const TextStyle(color: Colors.black87),
-              ),
-            ),
-            PopupMenuItem(
-              value: 'name',
-              child: Text(
-                Localization.translate(
-                  'alphabetical',
-                  provider.currentLanguage,
-                ),
-                style: const TextStyle(color: Colors.black87),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  String _getSortLabel(String key, String lang) {
-    switch (key) {
-      case 'name':
-        return Localization.translate('alphabetical', lang);
-      case 'level_percentage':
-        return Localization.translate('storage_percentage', lang);
-      case 'inflow':
-        return Localization.translate('inflow_rate', lang);
-      case 'outflow':
-        return Localization.translate('outflow_rate', lang);
-      case 'capacity':
-      default:
-        return Localization.translate('capacity_limit', lang);
-    }
-  }
-
-  Widget _buildEmptyStateWidget(DamProvider provider) {
-    final lang = provider.currentLanguage;
-    return SizedBox(
-      height: 250,
-      width: double.infinity,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.waves_rounded, size: 64, color: Colors.grey.shade600),
-          const SizedBox(height: 16),
-          Text(
-            Localization.translate('no_reservoirs', lang),
-            style: const TextStyle(
-              color: Colors.black87,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            lang == 'en'
-                ? "Try clearing your search queries or filter choices."
-                : "தேடல் மற்றும் வடிப்பான்களை மாற்றி மீண்டும் முயலவும்.",
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton.icon(
-            onPressed: provider.clearFilters,
-            icon: const Icon(Icons.clear_all_rounded, color: Colors.white),
-            label: Text(
-              Localization.translate('reset_filters', lang),
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0288D1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
           ),
         ],
       ),
@@ -958,12 +566,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
-  Widget _buildMarketBanner(DamProvider damProv) {
+  Widget _buildThreeCardsSection(DamProvider damProv) {
     final isTa = damProv.currentLanguage == 'ta';
     return Consumer<MarketProvider>(
       builder: (context, marketProv, child) {
         final bullion = marketProv.bullionRates;
-        final gold22k1g = bullion.firstWhere(
+        final gold22k = bullion.firstWhere(
           (b) => b.id == 'gold_22k_1g',
           orElse: () => BullionRate(
             id: 'gold_22k_1g',
@@ -972,17 +580,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
             nameTa: 'தங்கம் 22K',
             unit: '1 Gram',
             unitTa: '1 கிராம்',
-            price: 6765.0,
-            changeAmount: 40.0,
-            changePercentage: '+0.60%',
+            price: 13150.0,
+            changeAmount: 15.0,
+            changePercentage: '+0.11%',
             isPositive: true,
             currency: '₹',
-            location: 'TN',
+            location: 'Tamil Nadu',
             updatedAt: '',
           ),
         );
 
-        final silver1g = bullion.firstWhere(
+        final silver = bullion.firstWhere(
           (b) => b.id == 'silver_1g',
           orElse: () => BullionRate(
             id: 'silver_1g',
@@ -991,104 +599,226 @@ class _DashboardScreenState extends State<DashboardScreen> {
             nameTa: 'வெள்ளி',
             unit: '1 Gram',
             unitTa: '1 கிராம்',
-            price: 93.5,
-            changeAmount: 0.8,
-            changePercentage: '+0.86%',
+            price: 235.0,
+            changeAmount: 0.0,
+            changePercentage: '0.00%',
             isPositive: true,
             currency: '₹',
-            location: 'TN',
+            location: 'Tamil Nadu',
             updatedAt: '',
           ),
         );
 
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const MarketScreen()),
-            );
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFFF8E1), Color(0xFFE8F5E9)],
-              ),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFFFD54F)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.03),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
+        final agri = marketProv.agriRates;
+        final turmeric = agri.firstWhere(
+          (a) => a.id.contains('turmeric'),
+          orElse: () => AgriRate(
+            id: 'erode_turmeric',
+            category: 'agri',
+            nameEn: 'Turmeric',
+            nameTa: 'விரல் மஞ்சள்',
+            market: 'Erode',
+            variety: '',
+            minPrice: 13800,
+            maxPrice: 15450,
+            modalPrice: 14700,
+            unit: '₹/Quintal',
+            unitTa: 'ரூ/குவிண்டால்',
+            changePercentage: '+2.1%',
+            isPositive: true,
+            district: 'Erode',
+            updatedAt: '',
+          ),
+        );
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 4, bottom: 10),
+              child: Text(
+                isTa ? 'முதன்மைச் சேவைகள்' : 'FEATURED SERVICES',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                  color: Colors.black54,
                 ),
-              ],
+              ),
             ),
+
+            // CARD 1: Dam Water Levels
+            _buildFeatureCard(
+              title: isTa ? 'அணை நீர்மட்ட நிலவரம்' : 'Dam Water Levels',
+              subtitle: isTa
+                  ? 'தமிழக அணைகளின் தற்போதைய நீர் இருப்பு & நீர்வரத்து'
+                  : 'Tamil Nadu Reservoir Storage & Flow Data',
+              badge: '${damProv.allDams.length} Dams',
+              gradientColors: [
+                const Color(0xFF0288D1),
+                const Color(0xFF0097A7),
+              ],
+              icon: Icons.water_drop_rounded,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DamListScreen()),
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // CARD 2: Gold & Metals
+            _buildFeatureCard(
+              title: isTa ? 'தங்கம் & வெள்ளி நிலவரம்' : 'Gold & Metal Rates',
+              subtitle:
+                  'Gold 22K: ₹${gold22k.price.toInt()}/g • Silver: ₹${silver.price}/g',
+              badge: gold22k.changePercentage,
+              gradientColors: [
+                const Color(0xFFFF8F00),
+                const Color(0xFFFFA000),
+              ],
+              icon: Icons.workspace_premium_rounded,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MarketScreen(initialIndex: 0),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // CARD 3: Erode Mandi Rates
+            _buildFeatureCard(
+              title: isTa ? 'ஈரோடு மண்டி நிலவரம்' : 'Erode Mandi Rates',
+              subtitle:
+                  'Turmeric: ₹${turmeric.modalPrice.toInt()} / Quintal • Rice & Paddy',
+              badge: 'Erode Mandi',
+              gradientColors: [
+                const Color(0xFF2E7D32),
+                const Color(0xFF388E3C),
+              ],
+              icon: Icons.grass_rounded,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const MarketScreen(initialIndex: 1),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildFeatureCard({
+    required String title,
+    required String subtitle,
+    required String badge,
+    required List<Color> gradientColors,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: gradientColors[0].withValues(alpha: 0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
             child: Row(
               children: [
-                const Icon(
-                  Icons.storefront_rounded,
-                  color: Color(0xFFFF8F00),
-                  size: 24,
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 28),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Text(
-                            isTa ? 'நேரடி சந்தை' : 'Live Market Rates',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                              color: Colors.black87,
+                          Expanded(
+                            child: Text(
+                              title,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 1,
+                              horizontal: 8,
+                              vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFF8F00),
-                              borderRadius: BorderRadius.circular(6),
+                              color: Colors.white.withValues(alpha: 0.25),
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              isTa ? 'நேரலை' : 'LIVE',
+                              badge,
                               style: const TextStyle(
-                                fontSize: 9,
                                 color: Colors.white,
+                                fontSize: 11,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: 4),
                       Text(
-                        'Gold: ₹${gold22k1g.price.toInt()}/g  •  Silver: ₹${silver1g.price}/g  •  Erode Turmeric',
+                        subtitle,
                         style: const TextStyle(
-                          fontSize: 11,
-                          color: Colors.black54,
+                          color: Colors.white70,
+                          fontSize: 12,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(width: 8),
                 const Icon(
                   Icons.arrow_forward_ios_rounded,
-                  size: 14,
-                  color: Colors.black45,
+                  color: Colors.white70,
+                  size: 16,
                 ),
               ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

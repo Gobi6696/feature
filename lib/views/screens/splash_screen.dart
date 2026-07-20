@@ -152,7 +152,7 @@ class _SplashScreenState extends State<SplashScreen>
                             ],
                           ),
                           child: const Icon(
-                            Icons.water_drop_rounded,
+                            Icons.storefront_rounded,
                             size: 72,
                             color: Colors.white,
                           ),
@@ -162,9 +162,9 @@ class _SplashScreenState extends State<SplashScreen>
 
                         // Main Title
                         const Text(
-                          'TN DAM TRACKER',
+                          'DAILY MARKET',
                           style: TextStyle(
-                            fontSize: 28,
+                            fontSize: 30,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2.5,
                             color: Colors.white,
@@ -182,7 +182,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                         // Tamil Subtitle
                         Text(
-                          'தமிழக அணை நீர்மட்ட நிலவரம்',
+                          'தினசரி சந்தை & நீர்மட்ட நிலவரம்',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -200,14 +200,14 @@ class _SplashScreenState extends State<SplashScreen>
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.15),
+                              color: Colors.white.withValues(alpha: 0.15),
                             ),
                           ),
                           child: const Text(
-                            'Real-Time Water Level Monitoring',
+                            'Dam Water Levels • Gold & Silver • Erode Mandi',
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.white70,

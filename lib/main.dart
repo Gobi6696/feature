@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MarketProvider()),
       ],
       child: MaterialApp(
-        title: 'Tamil Nadu Dam Tracker',
+        title: 'Daily Market',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           useMaterial3: true,

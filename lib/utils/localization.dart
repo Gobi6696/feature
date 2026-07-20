@@ -1,7 +1,7 @@
 class Localization {
   static const Map<String, Map<String, String>> _strings = {
     'en': {
-      'app_title': 'TN Dam Tracker',
+      'app_title': 'Daily Market',
       'daily_updates': 'Daily Updates',
       'compare_dams': 'Compare Dams',
       'overall_storage': 'Tamil Nadu State Storage',
@@ -64,12 +64,12 @@ class Localization {
       'cap_percent_compare': 'Capacity Percentage Comparison',
     },
     'ta': {
-      'app_title': 'தமிழக அணை நிலவரம்',
+      'app_title': 'தினசரி சந்தை',
       'daily_updates': 'தினசரி நிலவரம்',
       'compare_dams': 'அணைகள் ஒப்பீடு',
       'overall_storage': 'தமிழக மொத்த நீர் இருப்பு',
       'danger_alerts': 'ஆபத்து எச்சரிக்கைகள்',
-      'active_watches': 'கண்காணிப்பு நிலவரங்கள்',
+      'active_watches': 'கண்காணிப்பில்',
       'total_inflow': 'தமிழக மொத்த நீர்வரத்து',
       'total_outflow': 'தமிழக மொத்த நீர்வெளியேற்றம்',
       'search_placeholder': 'அணை, மாவட்டம் அல்லது ஆற்றைத் தேடுக...',
@@ -125,7 +125,7 @@ class Localization {
       'failed_load': 'அணை நிலவரங்களை ஏற்றுவதில் தோல்வி',
       'need_two_dams': 'ஒப்பிட குறைந்தது 2 அணைகள் தேவை.',
       'cap_percent_compare': 'கொள்ளளவு சதவீத ஒப்பீடு',
-    }
+    },
   };
 
   // Names dictionary
@@ -142,8 +142,14 @@ class Localization {
     'amaravathi': {'en': 'Amaravathi Dam', 'ta': 'அமராவதி அணை'},
     'pechiparai': {'en': 'Pechiparai Dam', 'ta': 'பேச்சிப்பாறை அணை'},
     'perunchani': {'en': 'Perunchani Dam', 'ta': 'பெருஞ்சாணி அணை'},
-    'chembarambakkam': {'en': 'Chembarambakkam Lake', 'ta': 'செம்பரம்பாக்கம் ஏரி'},
-    'redhills': {'en': 'Red Hills Lake (Puzhal)', 'ta': 'புழல் ஏரி (ரெட்ஹில்ஸ்)'},
+    'chembarambakkam': {
+      'en': 'Chembarambakkam Lake',
+      'ta': 'செம்பரம்பாக்கம் ஏரி',
+    },
+    'redhills': {
+      'en': 'Red Hills Lake (Puzhal)',
+      'ta': 'புழல் ஏரி (ரெட்ஹில்ஸ்)',
+    },
     'poondi': {'en': 'Poondi Reservoir', 'ta': 'பூண்டி நீர்த்தேக்கம்'},
     'thirumoorthy': {'en': 'Thirumoorthy Dam', 'ta': 'திருமூர்த்தி அணை'},
   };
@@ -200,16 +206,21 @@ class Localization {
   static const Map<String, String> _gatesTa = {
     'Closed': 'மூடப்பட்டுள்ளது',
     '1 Gate Open for Irrigation': 'பாசனத்திற்கு 1 மதகு திறப்பு',
-    '2 Gates Open (discharge of 1,800 cusecs)': '2 மதகுகள் திறப்பு (1,800 கனஅடி வெளியேற்றம்)',
-    '12 Gates Closed, 4 Sluice Gates Open': '12 மதகுகள் அடைப்பு, 4 மதகுகள் திறப்பு',
+    '2 Gates Open (discharge of 1,800 cusecs)':
+        '2 மதகுகள் திறப்பு (1,800 கனஅடி வெளியேற்றம்)',
+    '12 Gates Closed, 4 Sluice Gates Open':
+        '12 மதகுகள் அடைப்பு, 4 மதகுகள் திறப்பு',
     'Normal Flow Sluices Active': 'இயல்பான மதகு திறப்பு செயல்பாட்டில் உள்ளது',
     'Canal Outflow Active': 'கால்வாய் வெளியேற்றம் செயல்பாட்டில் உள்ளது',
     'Sluice Gates Closed': 'மதகுகள் மூடப்பட்டுள்ளன',
     'Spillways Active': 'மதகுகள் வழியாக உபரிநீர் வெளியேற்றம்',
-    '4 Gates Opened (Heavy Discharge!)': '4 மதகுகள் திறப்பு (அதிவேக வெள்ள வெளியேற்றம்!)',
-    'Closed (Water supply extraction active)': 'அடைப்பு (குடிநீர் விநியோகம் மட்டும்)',
+    '4 Gates Opened (Heavy Discharge!)':
+        '4 மதகுகள் திறப்பு (அதிவேக வெள்ள வெளியேற்றம்!)',
+    'Closed (Water supply extraction active)':
+        'அடைப்பு (குடிநீர் விநியோகம் மட்டும்)',
     'Supply extraction only': 'குடிநீர் விநியோகம் மட்டும்',
-    'Closed (Water supply extraction active) ': 'அடைப்பு (குடிநீர் விநியோகம் மட்டும்)',
+    'Closed (Water supply extraction active) ':
+        'அடைப்பு (குடிநீர் விநியோகம் மட்டும்)',
   };
 
   // Core string getter
@@ -218,7 +229,11 @@ class Localization {
   }
 
   // Dam name translator
-  static String translateDamName(String damId, String defaultName, String lang) {
+  static String translateDamName(
+    String damId,
+    String defaultName,
+    String lang,
+  ) {
     if (lang == 'ta') {
       return _names[damId]?['ta'] ?? defaultName;
     }

@@ -32,14 +32,16 @@ class MarketService {
             final List<dynamic> bullionRaw = json['bullion'] ?? [];
             final List<dynamic> agriRaw = json['agri'] ?? [];
 
-            final bullionList =
-                bullionRaw.map((b) => BullionRate.fromJson(b)).toList();
+            final bullionList = bullionRaw
+                .map((b) => BullionRate.fromJson(b))
+                .toList();
             final agriList = agriRaw.map((a) => AgriRate.fromJson(a)).toList();
 
             return {
               'bullion': bullionList,
               'agri': agriList,
-              'updatedAt': json['lastUpdated'] ?? DateTime.now().toIso8601String(),
+              'updatedAt':
+                  json['lastUpdated'] ?? DateTime.now().toIso8601String(),
             };
           }
         }

@@ -5,7 +5,8 @@ import '../../providers/market_provider.dart';
 import '../../models/market_model.dart';
 
 class MarketScreen extends StatefulWidget {
-  const MarketScreen({super.key});
+  final int initialIndex;
+  const MarketScreen({super.key, this.initialIndex = 0});
 
   @override
   State<MarketScreen> createState() => _MarketScreenState();
@@ -18,7 +19,11 @@ class _MarketScreenState extends State<MarketScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialIndex,
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MarketProvider>().loadMarketRates(silent: false);
     });
