@@ -139,6 +139,7 @@ class _AdScreenState extends State<AdScreen> {
                       width: _bannerAd!.size.width.toDouble(),
                       height: _bannerAd!.size.height.toDouble(),
                       child: AdWidget(ad: _bannerAd!),
+                    )
                   else
                     Container(
                       height: 100,
