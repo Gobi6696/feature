@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/dam_provider.dart';
 import '../../utils/localization.dart';
+import 'ad_screen.dart';
 import 'dam_list_screen.dart';
 import 'market_screen.dart';
 import '../../providers/market_provider.dart';
@@ -708,6 +709,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (_) => const MarketScreen(initialIndex: 1),
+                  ),
+                );
+              },
+            ),
+
+            const SizedBox(height: 12),
+
+            // CARD 4: Advertisement
+            _buildFeatureCard(
+              title: isTa ? 'சிறப்பு விளம்பரங்கள்' : 'Advertisement & Deals',
+              subtitle: isTa
+                  ? 'பிரத்யேக சலுகைகள் & சிறப்பு விளம்பரங்களை பார்க்க'
+                  : 'Tap to view exclusive AdMob banners & partner offers',
+              badge: 'Ad',
+              gradientColors: [
+                const Color(0xFF7C4DFF),
+                const Color(0xFF651FFF),
+              ],
+              icon: Icons.campaign_rounded,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const AdScreen(),
                   ),
                 );
               },

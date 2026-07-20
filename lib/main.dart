@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'providers/dam_provider.dart';
 import 'providers/market_provider.dart';
 import 'views/screens/dashboard_screen.dart';
 import 'views/screens/splash_screen.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  MobileAds.instance.initialize();
   runApp(const MyApp());
 }
 
