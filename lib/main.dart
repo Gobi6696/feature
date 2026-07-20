@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/dam_provider.dart';
+import 'providers/market_provider.dart';
 import 'views/screens/dashboard_screen.dart';
+import 'views/screens/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +15,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => DamProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (_) => DamProvider()),
+        ChangeNotifierProvider(create: (_) => MarketProvider()),
+      ],
       child: MaterialApp(
         title: 'Tamil Nadu Dam Tracker',
         debugShowCheckedModeBanner: false,
@@ -54,7 +59,7 @@ class MyApp extends StatelessWidget {
             bodyMedium: TextStyle(color: Colors.black54),
           ),
         ),
-        home: const DashboardScreen(),
+        home: const SplashScreen(),
       ),
     );
   }

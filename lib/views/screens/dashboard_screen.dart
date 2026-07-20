@@ -5,6 +5,9 @@ import '../../utils/localization.dart';
 import '../widgets/dam_card.dart';
 import 'compare_screen.dart';
 import 'dam_detail_screen.dart';
+import 'market_screen.dart';
+import '../../providers/market_provider.dart';
+import '../../models/market_model.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -116,6 +119,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
             },
           ),
           IconButton(
+            icon: const Icon(
+              Icons.storefront_rounded,
+              color: Color(0xFFFF8F00),
+              size: 26,
+            ),
+            tooltip: provider.currentLanguage == 'ta'
+                ? 'நேரடி சந்தை நிலவரம்'
+                : 'Market Rates',
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const MarketScreen()),
+              );
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh_rounded, color: Colors.black87),
             onPressed: () => provider.loadDams(),
           ),
@@ -142,7 +161,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       const SizedBox(height: 8),
                       // 1. Overall State Reservoir Storage Panel
                       _buildOverallStatsCard(provider, size),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 12),
+
+                      // 1b. Live Market Rates Ticker Card
+                      _buildMarketBanner(provider),
+                      const SizedBox(height: 16),
 
                       // 2. Search Bar
                       _buildSearchBar(provider),
@@ -932,6 +955,140 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildMarketBanner(DamProvider damProv) {
+    final isTa = damProv.currentLanguage == 'ta';
+    return Consumer<MarketProvider>(
+      builder: (context, marketProv, child) {
+        final bullion = marketProv.bullionRates;
+        final gold22k1g = bullion.firstWhere(
+          (b) => b.id == 'gold_22k_1g',
+          orElse: () => BullionRate(
+            id: 'gold_22k_1g',
+            category: 'bullion',
+            nameEn: 'Gold 22K',
+            nameTa: 'தங்கம் 22K',
+            unit: '1 Gram',
+            unitTa: '1 கிராம்',
+            price: 6765.0,
+            changeAmount: 40.0,
+            changePercentage: '+0.60%',
+            isPositive: true,
+            currency: '₹',
+            location: 'TN',
+            updatedAt: '',
+          ),
+        );
+
+        final silver1g = bullion.firstWhere(
+          (b) => b.id == 'silver_1g',
+          orElse: () => BullionRate(
+            id: 'silver_1g',
+            category: 'bullion',
+            nameEn: 'Silver',
+            nameTa: 'வெள்ளி',
+            unit: '1 Gram',
+            unitTa: '1 கிராம்',
+            price: 93.5,
+            changeAmount: 0.8,
+            changePercentage: '+0.86%',
+            isPositive: true,
+            currency: '₹',
+            location: 'TN',
+            updatedAt: '',
+          ),
+        );
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const MarketScreen()),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFFF8E1), Color(0xFFE8F5E9)],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFFFD54F)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.storefront_rounded,
+                  color: Color(0xFFFF8F00),
+                  size: 24,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            isTa ? 'நேரடி சந்தை' : 'Live Market Rates',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 1,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF8F00),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              isTa ? 'நேரலை' : 'LIVE',
+                              style: const TextStyle(
+                                fontSize: 9,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Gold: ₹${gold22k1g.price.toInt()}/g  •  Silver: ₹${silver1g.price}/g  •  Erode Turmeric',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 14,
+                  color: Colors.black45,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

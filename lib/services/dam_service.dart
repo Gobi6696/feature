@@ -15,7 +15,8 @@ class BackendOfflineException implements Exception {
 class DamService {
   // ── Backend Scraper URL ─────────────────────────────────────────────────────
   // Production hosted Render scraper API
-  static const String _productionRenderUrl = 'https://feature-kbn0.onrender.com';
+  static const String _productionRenderUrl =
+      'https://feature-kbn0.onrender.com';
 
   // Android emulator needs 10.0.2.2 to reach the host machine's localhost.
   static const String _scraperBase = 'http://10.0.2.2:3001';
@@ -26,12 +27,18 @@ class DamService {
   /// Checks whether the backend is reachable and returns the base URL that works.
   /// Returns null if both URLs are unreachable.
   Future<String?> _reachableBase() async {
-    for (final base in [_productionRenderUrl, _scraperBaseLocal, _scraperBase]) {
+    for (final base in [
+      _productionRenderUrl,
+      _scraperBaseLocal,
+      _scraperBase,
+    ]) {
       try {
         final uri = Uri.parse('$base/api/health');
         final response = await http
             .get(uri)
-            .timeout(const Duration(seconds: 8));
+            .timeout(
+              const Duration(seconds: 25),
+            ); // Render cold start can take 30-50s
         if (response.statusCode == 200) return base;
       } catch (_) {
         continue;
@@ -54,7 +61,7 @@ class DamService {
 
     try {
       final uri = Uri.parse('$base/api/dams');
-      final response = await http.get(uri).timeout(const Duration(seconds: 10));
+      final response = await http.get(uri).timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;

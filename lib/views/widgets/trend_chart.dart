@@ -26,7 +26,9 @@ class TrendChart extends StatelessWidget {
     if (history.isEmpty) {
       return SizedBox(
         height: 200,
-        child: Center(child: Text(Localization.translate('no_reservoirs', lang))),
+        child: Center(
+          child: Text(Localization.translate('no_reservoirs', lang)),
+        ),
       );
     }
 
@@ -44,8 +46,8 @@ class TrendChart extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                showStorage 
-                    ? Localization.translate('trend_storage', lang) 
+                showStorage
+                    ? Localization.translate('trend_storage', lang)
                     : Localization.translate('trend_level', lang),
                 style: const TextStyle(
                   fontSize: 16,
@@ -54,7 +56,10 @@ class TrendChart extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -111,7 +116,9 @@ class _ChartPainter extends CustomPainter {
     if (history.length < 2) return;
 
     // Get historical values based on setting
-    final List<double> values = history.map((e) => showStorage ? e.storage : e.level).toList();
+    final List<double> values = history
+        .map((e) => showStorage ? e.storage : e.level)
+        .toList();
     final List<DateTime> dates = history.map((e) => e.date).toList();
 
     // Calculate Min & Max values for scaling
@@ -147,13 +154,9 @@ class _ChartPainter extends CustomPainter {
     for (int i = 0; i <= gridSegments; i++) {
       final double ratio = i / gridSegments;
       final double y = chartHeight - (ratio * chartHeight);
-      
+
       // Draw grid line
-      canvas.drawLine(
-        Offset(paddingLeft, y),
-        Offset(width, y),
-        gridLinePaint,
-      );
+      canvas.drawLine(Offset(paddingLeft, y), Offset(width, y), gridLinePaint);
 
       // Draw Y label
       final double labelVal = minValue + (ratio * range);
@@ -165,7 +168,7 @@ class _ChartPainter extends CustomPainter {
         text: textSpan,
         textDirection: TextDirection.ltr,
       )..layout();
-      
+
       textPainter.paint(
         canvas,
         Offset(paddingLeft - textPainter.width - 8, y - textPainter.height / 2),
@@ -187,15 +190,18 @@ class _ChartPainter extends CustomPainter {
     for (int i = 0; i < points.length - 1; i++) {
       final p0 = points[i];
       final p1 = points[i + 1];
-      
+
       // Calculate cubic bezier control points for smooth line curves
       final controlPoint1 = Offset(p0.dx + (p1.dx - p0.dx) / 2, p0.dy);
       final controlPoint2 = Offset(p0.dx + (p1.dx - p0.dx) / 2, p1.dy);
 
       path.cubicTo(
-        controlPoint1.dx, controlPoint1.dy,
-        controlPoint2.dx, controlPoint2.dy,
-        p1.dx, p1.dy,
+        controlPoint1.dx,
+        controlPoint1.dy,
+        controlPoint2.dx,
+        controlPoint2.dy,
+        p1.dx,
+        p1.dy,
       );
     }
 
@@ -209,10 +215,7 @@ class _ChartPainter extends CustomPainter {
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [
-          lineColor.withOpacity(0.25),
-          lineColor.withOpacity(0.00),
-        ],
+        colors: [lineColor.withOpacity(0.25), lineColor.withOpacity(0.00)],
       ).createShader(Rect.fromLTRB(paddingLeft, 0, width, chartHeight))
       ..style = PaintingStyle.fill;
 
@@ -242,11 +245,15 @@ class _ChartPainter extends CustomPainter {
     for (int i = 0; i < points.length; i++) {
       // Draw point circle
       canvas.drawCircle(points[i], 3.0, pointPaint);
-      
+
       // Highlight last point with a glow ring
       if (i == points.length - 1) {
         canvas.drawCircle(points[i], 6.0, ringPaint);
-        canvas.drawCircle(points[i], 10.0, ringPaint..color = lineColor.withOpacity(0.3));
+        canvas.drawCircle(
+          points[i],
+          10.0,
+          ringPaint..color = lineColor.withOpacity(0.3),
+        );
       }
 
       // Draw X-axis text label (only draw odd-indexed dates or 3/4 labels to avoid overlap)
@@ -260,7 +267,7 @@ class _ChartPainter extends CustomPainter {
           text: textSpan,
           textDirection: TextDirection.ltr,
         )..layout();
-        
+
         textPainter.paint(
           canvas,
           Offset(points[i].dx - textPainter.width / 2, chartHeight + 8),
