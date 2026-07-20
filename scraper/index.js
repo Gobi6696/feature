@@ -13,6 +13,7 @@ const express  = require('express');
 const cors     = require('cors');
 const cron     = require('node-cron');
 const { scrapeDams } = require('./scraper');
+const { fetchBullionRates, fetchErodeAgriRates } = require('./market_scraper');
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -133,6 +134,27 @@ app.post('/api/refresh', async (req, res) => {
     lastUpdated: cache.lastUpdated,
     error:       cache.error,
   });
+});
+
+/** Market Rates endpoint (Precious Metals + Erode Agri Commodities) */
+app.get('/api/market/all', async (req, res) => {
+  try {
+    const bullion = await fetchBullionRates();
+    const agri = await fetchErodeAgriRates();
+    res.json({
+      success: true,
+      lastUpdated: new Date().toISOString(),
+      bullionCount: bullion.length,
+      agriCount: agri.length,
+      bullion,
+      agri,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
 });
 
 // ─── Start ────────────────────────────────────────────────────────────────────
